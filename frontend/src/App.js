@@ -1,40 +1,40 @@
-import logo from './logo.svg';
-import Menu from "./components/menu/menu"; // Assuming Menu component is in a separate file
-
+import React, { useState, useEffect } from 'react';
+import Menu from "./components/menu/menu";
 import Posts from './components/pages/Posts/index';
+import Loader from './components/loader';
+
 function App() {
+  const [loading, setLoading] = useState(true);
+  const [apiRequests, setApiRequests] = useState(0);
+
+  // Increment the count of ongoing API requests when the component mounts
+  useEffect(() => {
+    setApiRequests(2); // You might want to adjust this initial count based on your actual number of API requests
+  }, []);
+
+  // Function to decrement the count of ongoing API requests
+  const apiRequestCompleted = () => {
+    setApiRequests(prevRequests => prevRequests - 1);
+  };
+
+  useEffect(() => {
+    // Check if all API requests are completed
+    if (apiRequests === 0) {
+      setLoading(false);
+    }
+  }, [apiRequests]);
+
   return (
     <div className="App">
-      <header className="App-header">
-       
-      <div>
-      <div className="top">
-        <div className="links">
-          <a href="https://www.linkedin.com/in/gururaj-math-223360255/" target="_blank">
-            <i className="bx bxl-linkedin-square"></i>
-          </a>
-          <a href="https://codepen.io/gururajmath"><i className="bx bxl-codepen" target="_blank"></i></a>
-          <a href="https://github.com/Gururaj-Math" target="_blank"><i className="bx bxl-github"></i></a>
-        </div>
-        <div className="head">
-          OST<span>.</span>
-        </div>
-        <div className="search">
-          <i className="bx bx-search"></i>
-          <i className="fa-solid fa-bars on hamburger"></i>
-        </div>
-      </div>
-      <Menu />
-      <div className="alert">
-        <ul className="navigation1">
-          <i className="bx bxs-x-circle close"></i>
-          {/* Your dynamic menu items will be populated here */}
-        </ul>
-      </div>
-    </div>
-
-        <Posts />
-      </header>
+      {loading ? (
+        <Loader /> // Global loader
+      ) : (
+        <header className="App-header">
+          {/* Your header content */}
+          <Menu setLoading={setLoading} apiRequestCompleted={apiRequestCompleted} />
+          <Posts setLoading={setLoading} apiRequestCompleted={apiRequestCompleted} />
+        </header>
+      )}
     </div>
   );
 }
